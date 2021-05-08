@@ -188,6 +188,7 @@
                         class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
                         id="image"
                         type="file"
+                        accept="image/*"
                         ref="upload_image"
                       />
                     </div>
@@ -215,7 +216,7 @@
             type="button"
             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
           >
-            save
+            {{ saving_record ? "saving..." : "save" }}
           </button>
           <span class="text-sm text-red-600" v-if="error">{{ error }}</span>
         </div>
@@ -241,6 +242,7 @@ export default {
       joining_date: "",
       leaving_date: "",
       still_working: false,
+      saving_record: false,
       error: "",
     };
   },
@@ -271,16 +273,26 @@ export default {
         return;
       } else {
         this.error = "";
+        this.saving_record = true;
+        let formData = new FormData();
+        formData.append("email", this.email);
+        formData.append("name", this.full_name);
+        formData.append("experience", this.total_experience);
+
+        let upload_file = this.$refs.upload_image;
+        let file = upload_file.files[0];
+        if (file) {
+          formData.append("avatar", file);
+        }
+
         this.$axios
-          .post("records", {
-            email: this.email,
-            full_name: this.full_name,
-            experience: this.total_experience,
-          })
+          .post("records", formData)
           .then(() => {
+            this.saving_record = false;
             this.$emit("new_record");
           })
           .catch((error) => {
+            this.saving_record = false;
             this.error = error.errorText;
           });
       }

@@ -1,20 +1,20 @@
 <template>
-  <div>
+  <div class="mt-1">
     <div class="grid grid-cols-5">
       <div class="">
         <div class="flex space-x-2">
           <div class="relative w-12 h-12">
             <img
               class="rounded-full border border-gray-100 shadow-sm"
-              src="https://randomuser.me/api/portraits/women/81.jpg"
-              alt="user image"
+              :src="'http://127.0.0.1:8000/storage/' + user.avatar"
+              alt="profile_img"
             />
           </div>
         </div>
       </div>
-      <div class="">John</div>
-      <div class="">John@gmail.com</div>
-      <div class="">3 years 2 months</div>
+      <div class="">{{ user.name }}</div>
+      <div class="">{{ user.email }}</div>
+      <div class="">{{ user.experience }}</div>
       <div>
         <button
           @click="deleteUserPrompt = true"
@@ -90,7 +90,7 @@
               type="button"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
             >
-              Yes
+              {{ deleting_record ? "Deleting..." : "Yes" }}
             </button>
             <button
               @click="deleteUserPrompt = false"
@@ -110,13 +110,25 @@
 <script>
 export default {
   name: "UsersInfo",
-  props: ["userInfo"],
+  props: ["user"],
   data() {
-    return { deleteUserPrompt: false };
+    return { deleteUserPrompt: false, deleting_record: false, error: "" };
   },
   methods: {
     deleteUser() {
-      //
+      this.error = "";
+      this.deleting_record = true;
+      this.$axios
+        .delete(`records/${this.user.id}`)
+        .then(() => {
+          this.deleteUserPrompt = false;
+          this.deleting_record = false;
+          this.$emit("record_removed");
+        })
+        .catch((error) => {
+          this.deleting_record = false;
+          this.error = error.errorText;
+        });
     },
   },
 };

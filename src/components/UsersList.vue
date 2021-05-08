@@ -1,23 +1,20 @@
 <template>
   <div>
-    <button
-      @click="createUserRecordPrompt = true"
-      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded float-right"
-    >
-      Add new
-    </button>
+    <div class="py-4 px-8 bg-white shadow-lg rounded-lg my-20 m-2">
+      <h3 class="text-gray-800 text-3xl font-semibold">User Records</h3>
+
+      <button
+        @click="createUserRecordPrompt = true"
+        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded float-right"
+      >
+        Add new
+      </button>
+    </div>
+
     <div
       class="py-4 px-8 bg-white shadow-lg rounded-lg my-20 justify-items-center m-2"
     >
       <div class="">
-        <h2 class="text-gray-800 text-3xl font-semibold">User Records</h2>
-        <div class="text-display text-green-600" v-if="getting_records">
-          Fetching Records...
-        </div>
-        <div class="text-display text-red-600" v-if="error">
-          {{ error }}
-        </div>
-
         <create-user-record
           v-if="createUserRecordPrompt"
           @close="createUserRecordPrompt = false"
@@ -34,8 +31,16 @@
           <div class="font-semibold">Experience</div>
           <div></div>
         </div>
+        <div class="text-display text-green-600" v-if="getting_records">
+          Fetching Records...
+        </div>
+        <div class="text-display text-red-600" v-if="error">
+          {{ error }}
+        </div>
       </div>
-      <user-info />
+      <div v-for="(record, index) in records" :key="index">
+        <user-info :user="record" @record_removed="getRecords()" />
+      </div>
     </div>
   </div>
 </template>
