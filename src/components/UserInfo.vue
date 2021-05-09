@@ -5,8 +5,15 @@
         <div class="flex space-x-2">
           <div class="relative w-12 h-12">
             <img
+              v-if="user.avatar"
               class="rounded-full border border-gray-100 shadow-sm"
               :src="'http://127.0.0.1:8000/storage/' + user.avatar"
+              alt="profile_img"
+            />
+            <img
+              v-else
+              class="rounded-full border border-gray-100 shadow-sm"
+              src="@/assets/avatar.png"
               alt="profile_img"
             />
           </div>
